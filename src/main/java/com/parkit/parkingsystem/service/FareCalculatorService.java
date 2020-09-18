@@ -9,7 +9,6 @@ public class FareCalculatorService {
         if( (ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime())) ){
             throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime().toString());
         }
-
         double inHour = ticket.getInTime().getTime();
         double outHour = ticket.getOutTime().getTime();
 
@@ -27,5 +26,7 @@ public class FareCalculatorService {
             }
             default: throw new IllegalArgumentException("Unkown Parking Type");
         }
+        if (ticket.isDiscount())
+            ticket.setPrice(ticket.getPrice() * Fare.DISCOUNT);
     }
 }

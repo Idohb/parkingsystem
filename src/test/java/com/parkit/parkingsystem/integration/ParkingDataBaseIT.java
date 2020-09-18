@@ -95,7 +95,7 @@ public class ParkingDataBaseIT {
 		double inHour = ticket.getInTime().getTime();
 		double outHour = ticket.getOutTime().getTime();
 		double duration = (outHour - inHour) / (3600 * 1000); // Convert it in hours
-		assertEquals((double) Math.round(duration * Fare.CAR_RATE_PER_HOUR * 1000 ) /1000, (double) Math.round( ticket.getPrice() * 1000 ) / 1000);
+		assertEquals(duration * Fare.CAR_RATE_PER_HOUR, ticket.getPrice(), 3);
         assertEquals(1, parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR));
         
         assertTrue(ticket.getOutTime() != null);
