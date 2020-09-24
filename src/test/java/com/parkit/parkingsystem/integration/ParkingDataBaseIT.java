@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -99,11 +100,45 @@ public class ParkingDataBaseIT {
 		double inHour = ticket.getInTime().getTime();
 		double outHour = ticket.getOutTime().getTime();
 		double duration = (outHour - inHour) / (3600 * 1000); // Convert it in hours
-		assertEquals(duration * Fare.CAR_RATE_PER_HOUR, ticket.getPrice(), 3);
+		assertEquals(duration * Fare.CAR_RATE_PER_HOUR, ticket.getPrice(), 0.01);
         assertEquals(1, parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR));
         
         assertTrue(ticket.getOutTime() != null);
         
+    }
+    
+    @Test
+    public void testRecurringUsers() throws Exception{
+    	ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO, userDAO);
+        parkingService.processIncomingVehicle();
+
+		ticket = ticketDAO.getTicket("ABCDEF");
+        assertFalse(ticket.isDiscount());
+
+		Date inTime = new Date();
+		Date outTime = new Date();
+		inTime.setTime(System.currentTimeMillis() - (45 * 60 * 1000));
+		ticket = ticketDAO.getTicket(inputReaderUtil.readVehicleRegistrationNumber());
+		ticket.setInTime(inTime);
+		ticket.setOutTime(outTime);		
+		ticketDAO.saveTicket(ticket);
+		
+		parkingService.processExitingVehicle();
+		ticket = ticketDAO.getTicket("ABCDEF");
+
+		
+        parkingService.processIncomingVehicle();
+
+		ticket = ticketDAO.getTicket("ABCDEF");
+		assertTrue( ticket.isDiscount() );
+
+		parkingService.processExitingVehicle();
+		ticket = ticketDAO.getTicket("ABCDEF");
+		double inHour = ticket.getInTime().getTime();
+		double outHour = ticket.getOutTime().getTime();
+		double duration = (outHour - inHour) / (3600 * 1000); // Convert it in hours
+		assertEquals(duration * Fare.CAR_RATE_PER_HOUR * Fare.DISCOUNT, ticket.getPrice(), 0.01);
+
     }
 
 }

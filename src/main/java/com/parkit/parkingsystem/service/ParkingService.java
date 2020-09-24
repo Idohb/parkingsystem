@@ -48,9 +48,12 @@ public class ParkingService {
                 //ticket.setId(ticketID);
                 if (userDAO.getUserRecurring(vehicleRegNumber) != null) {
                 	users.setRecurring(users.getRecurring());
+                	if (users.getRecurring() > 0)
+                		ticket.setDiscount(true);
                 	System.out.println("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
                 } else {
                 	users.setRecurring(0);
+                	ticket.setDiscount(false);
                 }
                 users.setVehicleRegNumber(vehicleRegNumber);
                 
@@ -59,7 +62,6 @@ public class ParkingService {
                 ticket.setPrice(0);
                 ticket.setInTime(inTime);
                 ticket.setOutTime(null);
-                ticket.setDiscount(false);                
                 ticketDAO.saveTicket(ticket);
                 userDAO.saveUser(users);
                 System.out.println("Generated Ticket and saved in DB");
@@ -119,6 +121,7 @@ public class ParkingService {
             String vehicleRegNumber = getVehichleRegNumber();
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
             Users users = userDAO.getUserRecurring(vehicleRegNumber);
+            System.out.println("vehicleRegNumber = " + vehicleRegNumber);
             Date outTime = new Date();
             ticket.setOutTime(outTime);
             fareCalculatorService.calculateFare(ticket);
