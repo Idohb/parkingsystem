@@ -1,16 +1,16 @@
 package com.parkit.parkingsystem.model;
 
-public class User {
-	private int idUser;
+public class Users {
+	private int idUsers;
 	private String vehicleRegNumber;
 	private int recurring;
 
 	public int getId() {
-		return idUser;
+		return idUsers;
 	}
 
 	public void setId(int id) {
-		this.idUser = id;
+		this.idUsers = id;
 	}
 	
 	public String getVehicleRegNumber() {

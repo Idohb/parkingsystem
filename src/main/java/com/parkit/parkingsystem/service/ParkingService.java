@@ -3,9 +3,10 @@ package com.parkit.parkingsystem.service;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.dao.ParkingSpotDAO;
 import com.parkit.parkingsystem.dao.TicketDAO;
+import com.parkit.parkingsystem.dao.UserDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
-import com.parkit.parkingsystem.model.User;
+import com.parkit.parkingsystem.model.Users;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,11 +22,13 @@ public class ParkingService {
     private InputReaderUtil inputReaderUtil;
     private ParkingSpotDAO parkingSpotDAO;
     private TicketDAO ticketDAO;
+    private UserDAO userDAO;
 
-    public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO){
+    public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO, UserDAO userDAO){
         this.inputReaderUtil = inputReaderUtil;
         this.parkingSpotDAO = parkingSpotDAO;
         this.ticketDAO = ticketDAO;
+        this.userDAO = userDAO;
     }
 
     public void processIncomingVehicle() {
@@ -39,23 +42,26 @@ public class ParkingService {
 
                 Date inTime = new Date();
                 Ticket ticket = new Ticket();
-                User user = new User();
+                Users users = new Users();
                 //user.setVehicleRegNumber(vehicleRegNumber);
                 //ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME, DISCOUNT)
                 //ticket.setId(ticketID);
-                if (ticketDAO.getTicket(ticket.getVehicleRegNumber()) != null) {
-                	ticket.setDiscount(true);
+                if (userDAO.getUserRecurring(vehicleRegNumber) != null) {
+                	users.setRecurring(users.getRecurring());
                 	System.out.println("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
                 } else {
-                	ticket.setDiscount(false);
+                	users.setRecurring(0);
                 }
+                users.setVehicleRegNumber(vehicleRegNumber);
+                
                 ticket.setParkingSpot(parkingSpot);
                 ticket.setVehicleRegNumber(vehicleRegNumber);
                 ticket.setPrice(0);
                 ticket.setInTime(inTime);
                 ticket.setOutTime(null);
-
+                ticket.setDiscount(false);                
                 ticketDAO.saveTicket(ticket);
+                userDAO.saveUser(users);
                 System.out.println("Generated Ticket and saved in DB");
                 System.out.println("Please park your vehicle in spot number:"+parkingSpot.getId());
                 System.out.println("Recorded in-time for vehicle number:"+vehicleRegNumber+" is:"+inTime);
@@ -112,9 +118,17 @@ public class ParkingService {
         try{
             String vehicleRegNumber = getVehichleRegNumber();
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
+            Users users = userDAO.getUserRecurring(vehicleRegNumber);
             Date outTime = new Date();
             ticket.setOutTime(outTime);
             fareCalculatorService.calculateFare(ticket);
+            if (users.getRecurring() > 0) {
+            	ticket.setDiscount(true);
+            	ticketDAO.saveTicket(ticket);
+            }
+        	users.setRecurring(users.getRecurring() + 1);
+        	userDAO.saveUser(users);
+        	userDAO.updateUser(users);
             if(ticketDAO.updateTicket(ticket)) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);

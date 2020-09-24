@@ -2,9 +2,7 @@ package com.parkit.parkingsystem.dao;
 
 import com.parkit.parkingsystem.config.DataBaseConfig;
 import com.parkit.parkingsystem.constants.DBConstants;
-import com.parkit.parkingsystem.constants.ParkingType;
-import com.parkit.parkingsystem.model.ParkingSpot;
-import com.parkit.parkingsystem.model.User;
+import com.parkit.parkingsystem.model.Users;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,17 +17,17 @@ public class UserDAO {
 
 	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
-	public boolean saveUser(User user) {
+	public boolean saveUser(Users users) {
 		Connection con = null;
 		try {
 			con = dataBaseConfig.getConnection();
 			PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_USER);
 //			PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);
 			// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-			// ps.setInt(1,ticket.getId());
+			//ps.setInt(1,user.getId());
 			//ps.setInt(1, user.getParkingSpot().getId());
-			ps.setString(2, user.getVehicleRegNumber());
-			ps.setInt(3, user.getRecurring());
+			ps.setInt(1, users.getRecurring());
+			ps.setString(2, users.getVehicleRegNumber());
 			return ps.execute();
 		} catch (Exception ex) {
 			logger.error("Error fetching next available slot", ex);
@@ -39,9 +37,9 @@ public class UserDAO {
 		}
 	}
 
-	public User setUserLicensePlateNumber(String vehicleRegNumber) {
+	public Users setUserLicensePlateNumber(String vehicleRegNumber) {
 		Connection con = null;
-		User user = null;
+		Users users = null;
 		try {
 			con = dataBaseConfig.getConnection();
 			PreparedStatement ps = con.prepareStatement(DBConstants.READ_RECURRING);
@@ -50,10 +48,10 @@ public class UserDAO {
 			ps.setString(1, vehicleRegNumber);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				user = new User();
-				user.setId(rs.getInt(2));
-				user.setVehicleRegNumber(vehicleRegNumber);
-				user.setRecurring(rs.getInt(3));
+				users = new Users();
+				users.setId(rs.getInt(2));
+				users.setVehicleRegNumber(vehicleRegNumber);
+				users.setRecurring(rs.getInt(3));
 			}
 			dataBaseConfig.closeResultSet(rs);
 			dataBaseConfig.closePreparedStatement(ps);
@@ -61,13 +59,13 @@ public class UserDAO {
 			logger.error("Error fetching next available slot", ex);
 		} finally {
 			dataBaseConfig.closeConnection(con); 
-			return user;
+			return users;
 		}
 	}
 	
-	public User getUserLicensePlateNumber(String vehicleRegNumber) {
+	public Users getUserLicensePlateNumber(String vehicleRegNumber) {
 		Connection con = null;
-		User user = null;
+		Users users = null;
 		try {
 			con = dataBaseConfig.getConnection();
 			PreparedStatement ps = con.prepareStatement(DBConstants.READ_RECURRING);
@@ -77,10 +75,10 @@ public class UserDAO {
 			ps.setString(1, vehicleRegNumber);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				user = new User();
-				user.setId(rs.getInt(2));
-				user.setVehicleRegNumber(vehicleRegNumber);
-				user.setRecurring(rs.getInt(3));
+				users = new Users();
+				users.setId(rs.getInt(2));
+				users.setVehicleRegNumber(vehicleRegNumber);
+				users.setRecurring(rs.getInt(3));
 			}
 			dataBaseConfig.closeResultSet(rs);
 			dataBaseConfig.closePreparedStatement(ps);
@@ -88,24 +86,24 @@ public class UserDAO {
 			logger.error("Error fetching next available slot", ex);
 		} finally {
 			dataBaseConfig.closeConnection(con);
-			return user;
+			return users;
 		}
 	}
 	
-	public User getUserRecurring(String vehicleRegNumber) {
+	public Users getUserRecurring(String vehicleRegNumber) {
 		Connection con = null;
-		User user = null;
+		Users users = null;
 		try {
 			con = dataBaseConfig.getConnection();
-			PreparedStatement ps = con.prepareStatement(DBConstants.READ_RECURRING);
+			PreparedStatement ps = con.prepareStatement(DBConstants.GET_USER);
 			// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
 			ps.setString(1, vehicleRegNumber);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				user = new User();
-				user.setId(rs.getInt(2));
-				user.setVehicleRegNumber(vehicleRegNumber);
-				user.setRecurring(rs.getInt(3));
+				users = new Users();
+				//users.setId(rs.getInt(1));
+				users.setRecurring(rs.getInt(1));
+				users.setVehicleRegNumber(vehicleRegNumber);
 			}
 			dataBaseConfig.closeResultSet(rs);
 			dataBaseConfig.closePreparedStatement(ps);
@@ -113,17 +111,17 @@ public class UserDAO {
 			logger.error("Error fetching next available slot", ex);
 		} finally {
 			dataBaseConfig.closeConnection(con);
-			return user;
+			return users;
 		}
 	}
 
-	public boolean updateUser(User user) {
+	public boolean updateUser(Users users) {
 		Connection con = null;
 		try {
 			con = dataBaseConfig.getConnection();
 			PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_USER);
-			ps.setDouble(1, user.getRecurring());
-			ps.setInt(3, user.getId());
+			ps.setDouble(1, users.getRecurring());
+			ps.setString(2, users.getVehicleRegNumber());
 			ps.execute();
 			return true;
 		} catch (Exception ex) {
