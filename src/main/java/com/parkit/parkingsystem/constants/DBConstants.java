@@ -12,5 +12,4 @@ public class DBConstants {
     public static final String SAVE_USER = "insert into users(RECCURING, VEHICLE_REG_NUMBER) values(?,?)";
     public static final String UPDATE_USER = "update users set RECCURING=? where VEHICLE_REG_NUMBER=?";
     public static final String GET_USER = "select u.RECCURING from USERS u where u.VEHICLE_REG_NUMBER=?";
-    public static final String READ_RECURRING = "select u.RECCURING from USERS u where u.id = ?";
 }

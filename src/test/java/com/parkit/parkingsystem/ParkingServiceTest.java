@@ -11,16 +11,22 @@ import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.model.Users;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +37,7 @@ public class ParkingServiceTest {
 
     @Mock
     private static InputReaderUtil inputReaderUtil;
-    @Mock
+    @Spy
     private static ParkingSpotDAO parkingSpotDAO;
     @Mock
     private static TicketDAO ticketDAO;
@@ -39,60 +45,34 @@ public class ParkingServiceTest {
     private static DataBasePrepareService dataBasePrepareService;
     @Mock
     private static UserDAO userDAO;
+    
+    
     @BeforeEach
-    private void setUpPerTest() {
-        try {
-
-            ticketDAO.dataBaseConfig = dataBaseTestConfig;
-            parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO, userDAO);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw  new RuntimeException("Failed to set up test mock objects");
-        }
+    private void setUpPerTest() throws Exception {
+        dataBasePrepareService.clearDataBaseEntries();
     }
     
+    @AfterAll
+    private static void tearDown(){
+
+    }
     
     @Test
     public void processIncommingVehicleTest() throws Exception{
+
+
     	when(inputReaderUtil.readSelection()).thenReturn(1);
+        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+        parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO, userDAO);
         parkingService.processIncomingVehicle();
-        verify(parkingSpotDAO, Mockito.times(1)).getNextAvailableSlot(any(ParkingType.class));
-        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
-        Ticket ticket = new Ticket();
-        Date date = new Date();
-        Users users = new Users();
-
-        if (userDAO.getUserRecurring("ABCDEF") != null) {
-        	users.setRecurring(users.getRecurring());
-        	if (users.getRecurring() > 0)
-        		ticket.setDiscount(true);
-        	System.out.println("Welcome back! As a recurring user of our parking lot, you'll benefit from a 5% discount.");
-        } else {
-        	users.setRecurring(0);
-        	ticket.setDiscount(false);
-        }
-        users.setVehicleRegNumber("ABCDEF");
-        
-        ticket.setParkingSpot(parkingSpot);
-        ticket.setVehicleRegNumber("ABCDEF");
-        ticket.setPrice(0);
-        ticket.setInTime(date);
-        ticket.setOutTime(null);
-        ticketDAO.saveTicket(ticket);
-        userDAO.saveUser(users);
-        ticketDAO.updateTicket(ticket);
-        userDAO.updateUser(users);
-        
-        assertEquals("ABCDEF", ticket.getVehicleRegNumber());
-        assertEquals("ABCDEF", users.getVehicleRegNumber());
-
-        
+        ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
+        assertTrue(parkingSpot.isAvailable());
     }
     
     @Test
     public void processExitingVehicleTest() throws Exception{
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-
+        parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO, userDAO);
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
         Ticket ticket = new Ticket();
         ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
@@ -106,13 +86,11 @@ public class ParkingServiceTest {
         users.setVehicleRegNumber("ABCDEF");
         when(userDAO.getUserRecurring(anyString())).thenReturn(users);
         when(userDAO.updateUser(any(Users.class))).thenReturn(true);
-        when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
         parkingService.processExitingVehicle();
+        verify(userDAO, Mockito.times(1)).updateUser(any(Users.class));
+        verify(ticketDAO, Mockito.times(1)).updateTicket(any(Ticket.class));
         verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
     }
-    
-    
-
 }
 
 

@@ -27,8 +27,10 @@ create table users(
 insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(1,true,'CAR');
 insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(2,true,'CAR');
 insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(3,true,'CAR');
-insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(4,true,'BIKE');
-insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(5,true,'BIKE');
+insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(4,true,'CAR');
+insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(6,true,'CAR');
+insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(7,true,'BIKE');
+insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(8,true,'BIKE');
 commit;
 
 create database test;
@@ -59,6 +61,8 @@ create table users(
 insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(1,true,'CAR');
 insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(2,true,'CAR');
 insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(3,true,'CAR');
-insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(4,true,'BIKE');
-insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(5,true,'BIKE');
+insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(4,true,'CAR');
+insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(6,true,'CAR');
+insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(7,true,'BIKE');
+insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(8,true,'BIKE');
 commit;
