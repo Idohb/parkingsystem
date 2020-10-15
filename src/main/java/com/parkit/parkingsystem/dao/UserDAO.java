@@ -19,6 +19,7 @@ public class UserDAO {
 
 	public boolean saveUser(Users users) {
 		Connection con = null;
+        boolean result = false;
 		try {
 			con = dataBaseConfig.getConnection();
 			PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_USER);
@@ -28,13 +29,14 @@ public class UserDAO {
 			//ps.setInt(1, user.getParkingSpot().getId());
 			ps.setInt(1, users.getRecurring());
 			ps.setString(2, users.getVehicleRegNumber());
-			return ps.execute();
+            result = ps.execute();
+            dataBaseConfig.closePreparedStatement(ps);
 		} catch (Exception ex) {
 			logger.error("Error fetching next available slot", ex);
 		} finally {
 			dataBaseConfig.closeConnection(con);
-			return false;
 		}
+		return result;
 	}
 
 	public Users getUserRecurring(String vehicleRegNumber) {
@@ -62,20 +64,22 @@ public class UserDAO {
 		}
 	}
 
-	public boolean updateUser(Users users) {
+	public int updateUser(Users users) {
 		Connection con = null;
+		int result = -1;
 		try {
 			con = dataBaseConfig.getConnection();
 			PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_USER);
 			ps.setDouble(1, users.getRecurring());
 			ps.setString(2, users.getVehicleRegNumber());
-			ps.execute();
-			return true;
+			result = ps.executeUpdate();
+            dataBaseConfig.closePreparedStatement(ps);
+
 		} catch (Exception ex) {
 			logger.error("Error saving ticket info", ex);
 		} finally {
 			dataBaseConfig.closeConnection(con);
 		}
-		return false;
+		return result;
 	}
 }

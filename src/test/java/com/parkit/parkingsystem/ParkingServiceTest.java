@@ -79,13 +79,13 @@ public class ParkingServiceTest {
         ticket.setParkingSpot(parkingSpot);
         ticket.setVehicleRegNumber("ABCDEF");
         when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
-        when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(true);
+        when(ticketDAO.updateTicket(any(Ticket.class))).thenReturn(1);
 
         Users users = new Users();
         users.setRecurring(1);
         users.setVehicleRegNumber("ABCDEF");
         when(userDAO.getUserRecurring(anyString())).thenReturn(users);
-        when(userDAO.updateUser(any(Users.class))).thenReturn(true);
+        when(userDAO.updateUser(any(Users.class))).thenReturn(1);
         parkingService.processExitingVehicle();
         verify(userDAO, Mockito.times(1)).updateUser(any(Users.class));
         verify(ticketDAO, Mockito.times(1)).updateTicket(any(Ticket.class));

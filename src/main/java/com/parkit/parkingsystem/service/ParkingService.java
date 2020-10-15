@@ -132,7 +132,7 @@ public class ParkingService {
         	users.setRecurring(users.getRecurring() + 1);
         	userDAO.saveUser(users);
         	userDAO.updateUser(users);
-            if(ticketDAO.updateTicket(ticket)) {
+            if(ticketDAO.updateTicket(ticket) != 0) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);
                 parkingSpotDAO.updateParking(parkingSpot);
