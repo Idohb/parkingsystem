@@ -85,7 +85,7 @@ public class ParkingServiceTest {
         users.setRecurring(1);
         users.setVehicleRegNumber("ABCDEF");
         when(userDAO.getUserRecurring(anyString())).thenReturn(users);
-        when(userDAO.updateUser(any(Users.class))).thenReturn(1);
+		when(userDAO.updateUser(any(Users.class))).thenReturn(1);
         parkingService.processExitingVehicle();
         verify(userDAO, Mockito.times(1)).updateUser(any(Users.class));
         verify(ticketDAO, Mockito.times(1)).updateTicket(any(Ticket.class));

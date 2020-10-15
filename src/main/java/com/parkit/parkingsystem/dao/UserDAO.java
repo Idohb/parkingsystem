@@ -12,25 +12,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class UserDAO {
-
 	private static final Logger logger = LogManager.getLogger("UserDAO");
 
 	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
 	public boolean saveUser(Users users) {
 		Connection con = null;
-        boolean result = false;
+		boolean result = false;
 		try {
 			con = dataBaseConfig.getConnection();
 			PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_USER);
 //			PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);
 			// ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-			//ps.setInt(1,user.getId());
-			//ps.setInt(1, user.getParkingSpot().getId());
+			// ps.setInt(1,user.getId());
+			// ps.setInt(1, user.getParkingSpot().getId());
 			ps.setInt(1, users.getRecurring());
 			ps.setString(2, users.getVehicleRegNumber());
-            result = ps.execute();
-            dataBaseConfig.closePreparedStatement(ps);
+			result = ps.execute();
+			dataBaseConfig.closePreparedStatement(ps);
 		} catch (Exception ex) {
 			logger.error("Error fetching next available slot", ex);
 		} finally {
@@ -50,7 +49,7 @@ public class UserDAO {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				users = new Users();
-				//users.setId(rs.getInt(1));
+				// users.setId(rs.getInt(1));
 				users.setRecurring(rs.getInt(1));
 				users.setVehicleRegNumber(vehicleRegNumber);
 			}
@@ -60,8 +59,8 @@ public class UserDAO {
 			logger.error("Error fetching next available slot", ex);
 		} finally {
 			dataBaseConfig.closeConnection(con);
-			return users;
 		}
+		return users;
 	}
 
 	public int updateUser(Users users) {
@@ -73,7 +72,7 @@ public class UserDAO {
 			ps.setDouble(1, users.getRecurring());
 			ps.setString(2, users.getVehicleRegNumber());
 			result = ps.executeUpdate();
-            dataBaseConfig.closePreparedStatement(ps);
+			dataBaseConfig.closePreparedStatement(ps);
 
 		} catch (Exception ex) {
 			logger.error("Error saving ticket info", ex);

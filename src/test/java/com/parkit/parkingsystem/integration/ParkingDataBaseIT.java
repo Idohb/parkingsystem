@@ -28,58 +28,59 @@ import java.util.Date;
 @ExtendWith(MockitoExtension.class)
 public class ParkingDataBaseIT {
 
-    private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
-    private static ParkingSpotDAO parkingSpotDAO;
-    private static TicketDAO ticketDAO;
-    private static DataBasePrepareService dataBasePrepareService;
-    private static UserDAO userDAO;
-    
+	private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
+	private static ParkingSpotDAO parkingSpotDAO;
+	private static TicketDAO ticketDAO;
+	private static DataBasePrepareService dataBasePrepareService;
+	private static UserDAO userDAO;
+
 	private Ticket ticket;
 
-    @Mock
-    private static InputReaderUtil inputReaderUtil;
+	@Mock
+	private static InputReaderUtil inputReaderUtil;
 
-    @BeforeAll
-    private static void setUp() throws Exception{
-        parkingSpotDAO = new ParkingSpotDAO();
-        parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
-        ticketDAO = new TicketDAO();
-        ticketDAO.dataBaseConfig = dataBaseTestConfig;
-        userDAO = new UserDAO();
-        userDAO.dataBaseConfig = dataBaseTestConfig;
-        dataBasePrepareService = new DataBasePrepareService();
-    }
+	@BeforeAll
+	private static void setUp() throws Exception {
+		parkingSpotDAO = new ParkingSpotDAO();
+		parkingSpotDAO.dataBaseConfig = dataBaseTestConfig;
+		ticketDAO = new TicketDAO();
+		ticketDAO.dataBaseConfig = dataBaseTestConfig;
+		userDAO = new UserDAO();
+		userDAO.dataBaseConfig = dataBaseTestConfig;
+		dataBasePrepareService = new DataBasePrepareService();
+	}
 
-    @BeforeEach
-    private void setUpPerTest() throws Exception {
-        when(inputReaderUtil.readSelection()).thenReturn(1);
-        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-        dataBasePrepareService.clearDataBaseEntries();
-    }
+	@BeforeEach
+	private void setUpPerTest() throws Exception {
+		when(inputReaderUtil.readSelection()).thenReturn(1);
+		when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+		dataBasePrepareService.clearDataBaseEntries();
+	}
 
-    @AfterAll
-    private static void tearDown(){
+	@AfterAll
+	private static void tearDown() {
 
-    }
+	}
 
-    @Test
-    public void testParkingACar() throws Exception{
-        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO, userDAO);
-        parkingService.processIncomingVehicle();
+	@Test
+	public void testParkingACar() throws Exception {
+		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO, userDAO);
+		parkingService.processIncomingVehicle();
 
-        //WHEN
+		// WHEN
 		ticket = ticketDAO.getTicket("ABCDEF"); // Search ticket in DB from last input Reader
-		
-		//THEN
-        assertEquals("ABCDEF", ticket.getVehicleRegNumber());
-        assertEquals(ParkingType.CAR, ticket.getParkingSpot().getParkingType());
-        assertEquals(2, parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR));
-    }
 
-    @Test
-    public void testParkingLotExit() throws Exception{
-        //TODO: check that the fare generated and out time are populated correctly in the database
-    	// GIVEN
+		// THEN
+		assertEquals("ABCDEF", ticket.getVehicleRegNumber());
+		assertEquals(ParkingType.CAR, ticket.getParkingSpot().getParkingType());
+		assertEquals(2, parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR));
+	}
+
+	@Test
+	public void testParkingLotExit() throws Exception {
+		// TODO: check that the fare generated and out time are populated correctly in
+		// the database
+		// GIVEN
 		testParkingACar();
 		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO, userDAO);
 
@@ -88,12 +89,11 @@ public class ParkingDataBaseIT {
 		inTime.setTime(System.currentTimeMillis() - (45 * 60 * 1000));
 		ticket = ticketDAO.getTicket(inputReaderUtil.readVehicleRegistrationNumber());
 		ticket.setInTime(inTime);
-		ticket.setOutTime(outTime);		
+		ticket.setOutTime(outTime);
 		ticketDAO.saveTicket(ticket);
 
 		// WHEN
 		parkingService.processExitingVehicle();
-
 
 		// THEN
 		ticket = ticketDAO.getTicket(inputReaderUtil.readVehicleRegistrationNumber());
@@ -101,36 +101,35 @@ public class ParkingDataBaseIT {
 		double outHour = ticket.getOutTime().getTime();
 		double duration = (outHour - inHour) / (3600 * 1000); // Convert it in hours
 		assertEquals(duration * Fare.CAR_RATE_PER_HOUR, ticket.getPrice(), 0.01);
-        assertEquals(1, parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR));
-        
-        assertTrue(ticket.getOutTime() != null);
-        
-    }
-    
-    @Test
-    public void testRecurringUsers() throws Exception{
-    	ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO, userDAO);
-        parkingService.processIncomingVehicle();
+		assertEquals(1, parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR));
+
+		assertTrue(ticket.getOutTime() != null);
+
+	}
+
+	@Test
+	public void testRecurringUsers() throws Exception {
+		ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO, userDAO);
+		parkingService.processIncomingVehicle();
 
 		ticket = ticketDAO.getTicket("ABCDEF");
-        assertFalse(ticket.isDiscount());
+		assertFalse(ticket.isDiscount());
 
 		Date inTime = new Date();
 		Date outTime = new Date();
 		inTime.setTime(System.currentTimeMillis() - (45 * 60 * 1000));
 		ticket = ticketDAO.getTicket(inputReaderUtil.readVehicleRegistrationNumber());
 		ticket.setInTime(inTime);
-		ticket.setOutTime(outTime);		
+		ticket.setOutTime(outTime);
 		ticketDAO.saveTicket(ticket);
-		
+
 		parkingService.processExitingVehicle();
 		ticket = ticketDAO.getTicket("ABCDEF");
 
-		
-        parkingService.processIncomingVehicle();
+		parkingService.processIncomingVehicle();
 
 		ticket = ticketDAO.getTicket("ABCDEF");
-		assertTrue( ticket.isDiscount() );
+		assertTrue(ticket.isDiscount());
 
 		parkingService.processExitingVehicle();
 		ticket = ticketDAO.getTicket("ABCDEF");
@@ -139,6 +138,6 @@ public class ParkingDataBaseIT {
 		double duration = (outHour - inHour) / (3600 * 1000); // Convert it in hours
 		assertEquals(duration * Fare.CAR_RATE_PER_HOUR * Fare.DISCOUNT, ticket.getPrice(), 0.01);
 
-    }
+	}
 
 }

@@ -88,7 +88,7 @@ public class TicketDAO {
             ps.setInt(4,ticket.getId());
 
             result = ps.executeUpdate();
-            dataBaseConfig.closePreparedStatement(ps);
+			dataBaseConfig.closePreparedStatement(ps);
         }catch (Exception ex){
             logger.error("Error saving ticket info",ex);
         }finally {

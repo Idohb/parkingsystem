@@ -12,7 +12,7 @@ public class Users {
 	public void setId(int id) {
 		this.idUsers = id;
 	}
-	
+
 	public String getVehicleRegNumber() {
 		return vehicleRegNumber;
 	}
