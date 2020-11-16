@@ -5,7 +5,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DataBaseTestConfig extends DataBaseConfig {
 
@@ -14,8 +18,7 @@ public class DataBaseTestConfig extends DataBaseConfig {
 	public Connection getConnection() throws ClassNotFoundException, SQLException, IOException {
 		logger.info("Create DB connection");
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		String passpass = readFile();
-		return DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", passpass);
+		return DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", readPassword());
 	}
 
 	public void closeConnection(Connection con) {

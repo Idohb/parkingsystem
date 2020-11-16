@@ -1,39 +1,42 @@
 package com.parkit.parkingsystem.config;
 
-import java.io.BufferedReader;
 import java.io.File; // Import the File class
 import java.io.FileInputStream;
 import java.io.FileNotFoundException; // Import this class to handle errors
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.*;
+import java.util.Properties;
 
 public class DataBaseConfig {
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
-	private static final String FILENAME = "symptoms.txt";
 
-	protected String readFile() throws IOException {
+	protected String readPassword() throws IOException {
 		String pass = " ";
+		Properties p = null;
+		InputStream is = null;
 		try {
-			pass = FILENAME;
-			InputStream inputStream = new FileInputStream("filename.txt");
-			Reader fileReader = new InputStreamReader(inputStream, "UTF-8");
-			BufferedReader reader = new BufferedReader(fileReader);
-			pass = reader.readLine();
-			reader.close();
-			if (pass.isEmpty()) {
-				throw new IllegalStateException("The symtomps.txt file is empty, so result.out is not written");
-			}
+			String filePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator ;
+			p = new Properties();
+			is = new FileInputStream(filePath + "log4j.properties");
+			p.load(is);
+			pass = p.getProperty("pass");
 		} catch (FileNotFoundException e) {
-			System.out.println("An error occurred.");
+			System.out.println("An error occurred. The file not found");
 			e.printStackTrace();
+		} finally {
+			if (p != null && is != null) {
+				p.clear();
+				is.close();
+			}
 		}
 		return pass;
 	}
@@ -41,8 +44,7 @@ public class DataBaseConfig {
 	public Connection getConnection() throws ClassNotFoundException, SQLException, IOException {
 		logger.info("Create DB connection");
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		String passpass = readFile();
-		return DriverManager.getConnection("jdbc:mysql://localhost:3306/prod", "root", passpass);
+		return DriverManager.getConnection("jdbc:mysql://localhost:3306/prod", "root", readPassword());
 	}
 
 	public void closeConnection(Connection con) {

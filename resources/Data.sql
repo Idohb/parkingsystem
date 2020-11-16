@@ -22,7 +22,8 @@ create table ticket(
 create table users(
  ID int PRIMARY KEY AUTO_INCREMENT,
  RECCURING int NOT NULL,
- VEHICLE_REG_NUMBER varchar(10) NOT NULL);
+ VEHICLE_REG_NUMBER varchar(10) NOT NULL,
+ VEHICLE_IN_PARKING bool not NULL);
 
 insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(1,true,'CAR');
 insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(2,true,'CAR');
@@ -56,7 +57,8 @@ create table ticket(
 create table users(
  ID int PRIMARY KEY AUTO_INCREMENT,
  RECCURING int NOT NULL,
- VEHICLE_REG_NUMBER varchar(10) NOT NULL);
+ VEHICLE_REG_NUMBER varchar(10) NOT NULL,
+ VEHICLE_IN_PARKING bool not NULL);
 
 insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(1,true,'CAR');
 insert into parking(PARKING_NUMBER,AVAILABLE,TYPE) values(2,true,'CAR');

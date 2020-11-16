@@ -32,8 +32,8 @@ public class TicketDAO {
             ps.setDouble(3, ticket.getPrice());
 
             ps.setTimestamp(4, new Timestamp(ticket.getInTime().getTime()));
-            ps.setTimestamp(5, (ticket.getOutTime() == null)?null: (new Timestamp(ticket.getOutTime().getTime())) );
-            ps.setBoolean(6, ticket.isDiscount() );
+            ps.setTimestamp(5, (ticket.getOutTime() == null)?null: (new Timestamp(ticket.getOutTime().getTime())));
+            ps.setBoolean(6, ticket.isDiscount());
             result = ps.execute();
             dataBaseConfig.closePreparedStatement(ps);
 
