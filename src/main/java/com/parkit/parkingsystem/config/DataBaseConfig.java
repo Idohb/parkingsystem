@@ -18,7 +18,12 @@ import java.util.Properties;
 
 public class DataBaseConfig {
 	private static final Logger logger = LogManager.getLogger("DataBaseConfig");
-
+	/**
+	 * This method fix the problem that the password was show clearly in the code
+	 * 
+	 * @return a String to enter into the database
+	 * @throws IOException
+	 */
 	protected String readPassword() throws IOException {
 		String pass = " ";
 		Properties p = null;
@@ -41,12 +46,24 @@ public class DataBaseConfig {
 		return pass;
 	}
 
+	/**
+	 * connect to the database
+	 * @return Connection
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public Connection getConnection() throws ClassNotFoundException, SQLException, IOException {
 		logger.info("Create DB connection");
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		return DriverManager.getConnection("jdbc:mysql://localhost:3306/prod", "root", readPassword());
 	}
 
+	/**
+	 * method to close connection
+	 * 
+	 * @param con
+	 */
 	public void closeConnection(Connection con) {
 		if (con != null) {
 			try {
@@ -58,6 +75,10 @@ public class DataBaseConfig {
 		}
 	}
 
+	/**
+	 * method to close PrepareStatement
+	 * @param ps
+	 */
 	public void closePreparedStatement(PreparedStatement ps) {
 		if (ps != null) {
 			try {
@@ -69,6 +90,10 @@ public class DataBaseConfig {
 		}
 	}
 
+	/**
+	 * method to close ResultSet
+	 * @param rs
+	 */
 	public void closeResultSet(ResultSet rs) {
 		if (rs != null) {
 			try {

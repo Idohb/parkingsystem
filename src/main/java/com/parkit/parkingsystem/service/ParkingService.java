@@ -24,6 +24,13 @@ public class ParkingService {
 	private TicketDAO ticketDAO;
 	private UserDAO userDAO;
 
+	/**
+	 * Constructor
+	 * @param inputReaderUtil
+	 * @param parkingSpotDAO
+	 * @param ticketDAO
+	 * @param userDAO
+	 */
 	public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO,
 			UserDAO userDAO) {
 		this.inputReaderUtil = inputReaderUtil;
@@ -32,6 +39,10 @@ public class ParkingService {
 		this.userDAO = userDAO;
 	}
 
+	/**
+	 * method when the vehicle enter in the parking
+	 * @throws Exception
+	 */
 	public void processIncomingVehicle() throws Exception {
 			ParkingSpot parkingSpot = getNextParkingNumberIfAvailable();
 			if (parkingSpot != null && parkingSpot.getId() > 0) {
@@ -74,11 +85,21 @@ public class ParkingService {
 
 	}
 
+	/**
+	 * method to retrieve the vehicle reg number information
+	 * @return String
+	 * @throws IllegalArgumentException
+	 */
 	private String getVehichleRegNumber() throws IllegalArgumentException {
 		System.out.println("Please type the vehicle registration number and press enter key");
 		return inputReaderUtil.readVehicleRegistrationNumber();
 	}
 
+	/**
+	 * method to check if there is a spot available in the parking
+	 * @return ParkingSpot
+	 * @throws Exception
+	 */
 	public ParkingSpot getNextParkingNumberIfAvailable() throws Exception {
 		int parkingNumber = 0;
 		ParkingSpot parkingSpot = null;
@@ -92,6 +113,11 @@ public class ParkingService {
 		return parkingSpot;
 	}
 
+	
+	/**
+	 * select the vehicle type 
+	 * @return ParkingType
+	 */
 	private ParkingType getVehichleType() {
 		System.out.println("Please select vehicle type from menu");
 		System.out.println("1 CAR");
@@ -108,6 +134,10 @@ public class ParkingService {
 		}
 	}
 
+	/**
+	 * method when the vehicle is exiting the parking
+	 * @throws Exception
+	 */
 	public void processExitingVehicle() throws Exception {
 		try {
 			String vehicleRegNumber = getVehichleRegNumber();

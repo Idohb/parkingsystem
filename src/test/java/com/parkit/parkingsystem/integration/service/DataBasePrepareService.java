@@ -8,6 +8,9 @@ public class DataBasePrepareService {
 
 	DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
 
+	/**
+	 * method to clear data for SUTest and ITest
+	 */
 	public void clearDataBaseEntries() {
 		Connection connection = null;
 		try {
@@ -21,8 +24,6 @@ public class DataBasePrepareService {
 			
 			// clear users entries;
 			connection.prepareStatement("truncate table users").execute();
-//			connection.prepareStatement("truncate prod.users").execute();
-//			connection.prepareStatement("truncate test.users").execute();
 
 		} catch (Exception e) {
 			e.printStackTrace();

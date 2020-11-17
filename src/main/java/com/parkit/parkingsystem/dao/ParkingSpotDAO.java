@@ -16,6 +16,11 @@ public class ParkingSpotDAO {
 
 	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
+	/**
+	 * Method to see if there is still a Slot in the parking
+	 * @param parkingType
+	 * @return int
+	 */
 	public int getNextAvailableSlot(ParkingType parkingType) {
 		Connection con = null;
 		int result = -1;
@@ -37,6 +42,11 @@ public class ParkingSpotDAO {
 		return result;
 	}
 
+	/**
+	 * Update all info of table "parking" into the database 
+	 * @param parkingSpot
+	 * @return int
+	 */
 	public int updateParking(ParkingSpot parkingSpot) {
 		Connection con = null;
 		int result = -1;

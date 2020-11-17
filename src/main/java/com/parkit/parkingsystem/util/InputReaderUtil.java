@@ -10,6 +10,10 @@ public class InputReaderUtil {
 	private static Scanner scan = new Scanner(System.in, "UTF-8");
 	private static final Logger logger = LogManager.getLogger("InputReaderUtil");
 
+	/**
+	 * method to select the vehicle type
+	 * @return int
+	 */
 	public int readSelection() {
 		try {
 			int input = Integer.parseInt(scan.nextLine());
@@ -21,6 +25,11 @@ public class InputReaderUtil {
 		}
 	}
 
+	/**
+	 * method to enter the vehicle reg number
+	 * @return String
+	 * @throws IllegalArgumentException
+	 */
 	public String readVehicleRegistrationNumber() throws IllegalArgumentException {
 		try {
 			String vehicleRegNumber = scan.nextLine();

@@ -19,6 +19,12 @@ public class TicketDAO {
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
+    
+    /**
+     * insert a new line in the database with all info
+     * @param ticket
+     * @return boolean
+     */
     public boolean saveTicket(Ticket ticket){
         Connection con = null;
         boolean result = false;
@@ -46,6 +52,11 @@ public class TicketDAO {
 
     }
 
+    /**
+     * retrieve a ticket with teh vehicle reg Number
+     * @param vehicleRegNumber
+     * @return Ticket
+     */
     public Ticket getTicket(String vehicleRegNumber) {
         Connection con = null;
         Ticket ticket = null;
@@ -76,6 +87,11 @@ public class TicketDAO {
         return ticket;
     }
 
+    /**
+     * update all info in the table 
+     * @param ticket
+     * @return
+     */
     public int updateTicket(Ticket ticket) {
         Connection con = null;
         int result = -1;

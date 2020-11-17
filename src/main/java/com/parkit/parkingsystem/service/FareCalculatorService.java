@@ -5,6 +5,12 @@ import com.parkit.parkingsystem.model.Ticket;
 
 public class FareCalculatorService {
 
+	/**
+	 * Calculate the price ticket according to the time the vehicle was in the parking
+	 * The user get 30 minutes free ticket
+	 * Also, he can get a discount if he entering once before.
+	 * @param ticket
+	 */
 	public void calculateFare(Ticket ticket) {
 		if ((ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime()))) {
 			throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime().toString() + " In time provided :" + ticket.getInTime().toString());

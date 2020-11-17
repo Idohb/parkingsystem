@@ -15,12 +15,24 @@ public class DataBaseTestConfig extends DataBaseConfig {
 
 	private static final Logger logger = LogManager.getLogger("DataBaseTestConfig");
 
+	/**
+	 * enter in the database "test"
+	 * @return Connection
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 * 
+	 */
 	public Connection getConnection() throws ClassNotFoundException, SQLException, IOException {
 		logger.info("Create DB connection");
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		return DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", readPassword());
 	}
 
+	/**
+	 * close connection
+	 * @param con
+	 */
 	public void closeConnection(Connection con) {
 		if (con != null) {
 			try {
@@ -32,6 +44,10 @@ public class DataBaseTestConfig extends DataBaseConfig {
 		}
 	}
 
+	/**
+	 * close Prepared Statement
+	 * @param ps
+	 */
 	public void closePreparedStatement(PreparedStatement ps) {
 		if (ps != null) {
 			try {
@@ -43,6 +59,10 @@ public class DataBaseTestConfig extends DataBaseConfig {
 		}
 	}
 
+	/**
+	 * close ResultSet
+	 * @param rs
+	 */
 	public void closeResultSet(ResultSet rs) {
 		if (rs != null) {
 			try {

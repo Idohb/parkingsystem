@@ -19,6 +19,12 @@ public class UserDAO {
 
 	public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
+	
+	/**
+	 * insert a new line in the database with all info
+	 * @param users
+	 * @return boolean
+	 */
 	public boolean saveUser(Users users) {
 		Connection con = null;
 		boolean result = false;
@@ -42,6 +48,12 @@ public class UserDAO {
 		return result;
 	}
 
+	
+	/**
+     * Check if the Vehicle is in the parking with the vehicle reg Number
+	 * @param vehicleRegNumber
+	 * @return boolean
+	 */
     public boolean getUsers(String vehicleRegNumber) {
         Connection con = null;
         Users users = null;
@@ -68,6 +80,11 @@ public class UserDAO {
         return (users == null) ? false : users.getIsInTheParking();
     }
 
+    /**
+     * Check the recurring of a user. Return Users if available
+     * @param vehicleRegNumber
+     * @return Users
+     */
 	public Users getUserRecurring(String vehicleRegNumber) {
 		Connection con = null;
 		Users users = null;
@@ -94,6 +111,11 @@ public class UserDAO {
 		return users;
 	}
 
+	/**
+	 * update all info within the table users
+	 * @param users
+	 * @return
+	 */
 	public int updateUser(Users users) {
 		Connection con = null;
 		int result = -1;
